@@ -65,4 +65,20 @@ public class TodoController {
             return ResponseEntity.ok(existingTodo);
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Todo not found with id: " + id));
     }
+
+    @DeleteMapping("todos/{id}")
+    public ResponseEntity<String> deleteById(@PathVariable String id) {
+        Optional<TodoDTO> todo = todoRepository.findById(id);
+
+        if (todo.isPresent()) {
+            try {
+                todoRepository.deleteById(id);
+                return ResponseEntity.ok("Successfully deleted with id: " + id);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Todo not found with id: " + id);
+        }
+    }
 }
