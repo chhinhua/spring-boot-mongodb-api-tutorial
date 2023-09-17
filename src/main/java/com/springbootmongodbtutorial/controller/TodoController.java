@@ -34,6 +34,9 @@ public class TodoController {
     public ResponseEntity<?> createTodo(@RequestBody TodoDTO todoDTO) {
         try {
             todoDTO.setCreateAt(new Date(System.currentTimeMillis()));
+            if (todoDTO.getCompleted() == null) {
+                todoDTO.setCompleted(false);
+            }
             todoRepository.save(todoDTO);
             return new ResponseEntity<>(todoDTO, HttpStatus.CREATED);
         } catch (Exception e) {

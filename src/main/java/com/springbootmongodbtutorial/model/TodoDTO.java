@@ -1,5 +1,6 @@
 package com.springbootmongodbtutorial.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,9 +18,16 @@ import java.util.Date;
 public class TodoDTO {
     @Id
     private String id;
+
+    @NotNull(message = "Todo cannot be null")
     private String todo;
+
+    @NotNull(message = "Description cannot be null")
     private String description;
+
+    @NotNull(message = "Complete cannot be null")
     private Boolean completed;
+
     private Date createAt;
     private Date updateAt;
 }
