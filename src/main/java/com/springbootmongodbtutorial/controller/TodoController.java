@@ -1,7 +1,9 @@
 package com.springbootmongodbtutorial.controller;
 
+import com.springbootmongodbtutorial.exception.TodoCollectionException;
 import com.springbootmongodbtutorial.model.TodoDTO;
 import com.springbootmongodbtutorial.repository.TodoRepository;
+import com.springbootmongodbtutorial.service.TodoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,9 +18,11 @@ import java.util.Optional;
 @RequestMapping("api/v1")
 public class TodoController {
     private final TodoRepository todoRepository;
+    private final TodoService todoService;
 
-    public TodoController(TodoRepository todoRepository) {
+    public TodoController(TodoRepository todoRepository, TodoService todoService) {
         this.todoRepository = todoRepository;
+        this.todoService = todoService;
     }
 
     @GetMapping("/todos")
@@ -31,17 +35,8 @@ public class TodoController {
     }
 
     @PostMapping("/todos")
-    public ResponseEntity<?> createTodo(@RequestBody TodoDTO todoDTO) {
-        try {
-            todoDTO.setCreateAt(new Date(System.currentTimeMillis()));
-            if (todoDTO.getCompleted() == null) {
-                todoDTO.setCompleted(false);
-            }
-            todoRepository.save(todoDTO);
-            return new ResponseEntity<>(todoDTO, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<?> createTodo(@RequestBody TodoDTO todoDTO) throws TodoCollectionException {
+        return new ResponseEntity<>(todoService.createNewToDo(todoDTO), HttpStatus.CREATED);
     }
 
     @GetMapping("/todos/{id}")
